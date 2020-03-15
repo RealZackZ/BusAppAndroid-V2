@@ -1,0 +1,192 @@
+package com.example.busapp;
+
+import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MainActivity extends AppCompatActivity {
+
+
+    //static ArrayList<BusPOJO> Buslist = new ArrayList<>();
+   // ArrayList<String> Buslist22;
+
+    private ListView listView;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+       listView = (ListView) findViewById(R.id.buslistView);
+
+        getBuses();
+        //adapter = new BusAdapter(this, R.layout.adapter, Buslist);
+        //int listSize = Buslist.size();
+
+
+
+
+        //getBuses();
+
+        getBuses();
+
+
+
+
+
+    }
+
+
+
+
+    public void getBuses(){
+
+
+        //Your Ip Address here
+        //mac ipconfig getifaddr en0
+        String url = "http://10.0.0.237:5000/busreservationJ/";
+
+        RequestQueue requestQueue;
+
+// Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+// Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+
+// Instantiate the RequestQueue with the cache and network.
+        requestQueue = new RequestQueue(cache, network);
+
+// Start the queue
+        requestQueue.start();
+        // Initialize a new JsonArrayRequest instance
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // Do something with response
+                        //mTextView.setText(response.toString());
+
+                        // Process the JSON
+                        ArrayList<BusPOJO> Buslist = new ArrayList<>();
+
+                        try{
+                            // Loop through the array elements
+
+
+
+                            BusPOJO busPOJO = new BusPOJO();
+                            for(int i=0;i<response.length();i++){
+                                // Get current json object
+                                JSONObject obj = response.getJSONObject(i);
+
+
+
+                                busPOJO.setBusID(obj.getString("busID"));
+                                busPOJO.setBusNumber(obj.getString("busNumber"));
+                                busPOJO.setBusDate(obj.getString("busDate"));
+                                busPOJO.setBusFrom(obj.getString("busFrom"));
+                                busPOJO.setBusTo(obj.getString("busTo"));
+                                busPOJO.setPrice(obj.getString("price"));
+
+
+                                //Buslist.clear();
+
+
+
+                                Buslist.add(busPOJO);
+
+                                //Log.d("zzzzz",Buslist.get
+
+
+
+
+
+                            }
+
+
+
+                            BusAdapter adapter = new BusAdapter(getApplicationContext(), R.layout.adapter, Buslist);
+                            listView.setAdapter(adapter);
+                           // Log.d("TEST32423423", Buslist.get().getBusDate());
+
+                           // adapter.notifyDataSetChanged();
+
+
+
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+
+
+                       // Log.e("ErrorResponse:", error.getLocalizedMessage());
+                        // Do something when error occurred
+//                        Snackbar.make(
+//                                mCLayout,
+//                                "Error...",
+//                                Snackbar.LENGTH_LONG
+//                        ).show();
+                    }
+                }
+        )
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String creds = String.format("%s:%s","zz","zz");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+
+        // Add JsonArrayRequest to the RequestQueue
+        requestQueue.add(jsonArrayRequest);
+
+    }
+
+
+}
