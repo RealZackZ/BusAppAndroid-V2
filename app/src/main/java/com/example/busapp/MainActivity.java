@@ -3,7 +3,10 @@ package com.example.busapp;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
@@ -45,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
 
+    private EditText username,password;
+    private Button login;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +60,25 @@ public class MainActivity extends AppCompatActivity {
 
        listView = (ListView) findViewById(R.id.buslistView);
 
-        getBuses();
+
+
+        //getBuses();
         //adapter = new BusAdapter(this, R.layout.adapter, Buslist);
         //int listSize = Buslist.size();
 
 
+        username =findViewById(R.id.username);
+        password =findViewById(R.id.password);
+        login = findViewById(R.id.login);
+
+
+
+//        login.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
 
         //getBuses();
@@ -77,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
     public void getBuses(){
 
 
+
+        String email;
+        String password;
         //Your Ip Address here
         //mac ipconfig getifaddr en0
         String url = "http://10.0.0.237:5000/busreservationJ/";
@@ -134,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 Buslist.add(busPOJO);
 
-                                //Log.d("zzzzz",Buslist.get
+                                Log.d("BusList   ",Buslist.get(i).toString());
 
 
 
