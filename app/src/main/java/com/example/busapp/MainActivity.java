@@ -1,13 +1,18 @@
 package com.example.busapp;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
@@ -52,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private Button login;
 
 
+    public static String busIDfromClick = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
         //int listSize = Buslist.size();
 
 
-        username =findViewById(R.id.username);
-        password =findViewById(R.id.password);
-        login = findViewById(R.id.login);
-
-
+//        username =findViewById(R.id.username);
+//        password =findViewById(R.id.password);
+//        login = findViewById(R.id.login);
+//
+//
 
 //        login.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -79,17 +86,38 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        });
+        listView.setClickable(true);
 
-
+        initItemClick();
         //getBuses();
 
         getBuses();
 
+        //addBus(7);
 
+        //deleteBus(10);
 
 
 
     }
+
+
+    private void initItemClick() {
+        final ListView listView = findViewById(R.id.buslistView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
+                BusPOJO bus =(BusPOJO) listView.getItemAtPosition(position);
+                busIDfromClick = "";
+                busIDfromClick = bus.getBusID();
+                Log.d("BusID Clicked", busIDfromClick);
+            }
+        });
+    }
+
 
 
 
@@ -210,6 +238,144 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
 
     }
+
+
+    public void addBus(int busID){
+
+
+
+        String email;
+        String password;
+        //Your Ip Address here
+        //mac ipconfig getifaddr en0
+        String url = "http://10.0.0.237:5000/availablebusscheduleJ/addto/" + busID;
+
+        RequestQueue requestQueue;
+
+// Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+// Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+
+// Instantiate the RequestQueue with the cache and network.
+        requestQueue = new RequestQueue(cache, network);
+
+// Start the queue
+        requestQueue.start();
+        // Initialize a new JsonArrayRequest instance
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.POST,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+
+
+                        // Log.e("ErrorResponse:", error.getLocalizedMessage());
+                        // Do something when error occurred
+//                        Snackbar.make(
+//                                mCLayout,
+//                                "Error...",
+//                                Snackbar.LENGTH_LONG
+//                        ).show();
+                    }
+                }
+        )
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String creds = String.format("%s:%s","zz","zz");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+
+        // Add JsonArrayRequest to the RequestQueue
+        requestQueue.add(jsonArrayRequest);
+
+    }
+
+
+    public void deleteBus(int busID){
+
+
+
+        String email;
+        String password;
+        //Your Ip Address here
+        //mac ipconfig getifaddr en0
+        String url = "http://10.0.0.237:5000/busreservationJ/delete/" + busID;
+
+        RequestQueue requestQueue;
+
+// Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+// Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+
+// Instantiate the RequestQueue with the cache and network.
+        requestQueue = new RequestQueue(cache, network);
+
+// Start the queue
+        requestQueue.start();
+        // Initialize a new JsonArrayRequest instance
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+
+
+                        // Log.e("ErrorResponse:", error.getLocalizedMessage());
+                        // Do something when error occurred
+//                        Snackbar.make(
+//                                mCLayout,
+//                                "Error...",
+//                                Snackbar.LENGTH_LONG
+//                        ).show();
+                    }
+                }
+        )
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String creds = String.format("%s:%s","zz","zz");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+
+        // Add JsonArrayRequest to the RequestQueue
+        requestQueue.add(jsonArrayRequest);
+
+    }
+
+
+
+
+
+
 
 
 }
