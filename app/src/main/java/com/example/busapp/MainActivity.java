@@ -101,6 +101,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void initSettingButton(){
+        final Button settingsButton = (Button) findViewById(R.id.settings);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BusSettings.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+    } // Created by Peter Vo 3/17/20
+
+
 
     private void initItemClick() {
         final ListView listView = findViewById(R.id.buslistView);

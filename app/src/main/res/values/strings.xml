@@ -12,4 +12,16 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >1 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="From">From: </string>
+    <string name="To">To: </string>
+    <string name="Date">Date: </string>
+    <string name="Search">Search</string>
+    <string name="City">City</string>
+    <string name="Book">Book</string>
+    <string name="Reservations">Reservations</string>
+    <string name="Price">Price</string>
+    <string name="BusNumber">Bus Number</string>
+    <string name="Add">Add Bus</string>
+    <string name="Delete">Delete</string>
+    <string name="Setting">Settings</string>
 </resources>
