@@ -1,7 +1,7 @@
 package com.example.busapp;
 
+
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,72 +11,60 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BusAdapter extends BaseAdapter {
+public class BusAdapter extends ArrayAdapter<BusPOJO>  {
 
-    private Context applicationContext;
-    private int sample;
-    private ArrayList<BusPOJO> Buslist;
-
-
-    BusAdapter(Context applicationContext, int sample, ArrayList<BusPOJO> Buslist) {
-
-        this.applicationContext =applicationContext;
-        this.sample = sample;
-        this.Buslist =Buslist;
-
+    public BusAdapter(@NonNull Context context, @NonNull ArrayList<BusPOJO> busList) {
+        super(context, 0, busList);
     }
 
-
+    @NonNull
     @Override
-    public int getCount() {
-        return Buslist.size();
-    }
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        ViewHolder holder = null;
 
-    @Override
-    public Object getItem(int i) {
-        return Buslist.get(i);
-    }
+        BusPOJO busPOJO = getItem(position);
 
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
+        if (convertView == null) {
 
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-
-
-
-        if(view == null)
-        {
-            LayoutInflater layoutInflater = (LayoutInflater) applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            view =  layoutInflater.inflate(R.layout.adapter,viewGroup,false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.adapter, parent, false);
+            //holder = new ViewHolder();
+            convertView.setTag(holder);
 
         }
 
-        TextView date,from,to;
+        else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
+        TextView tvDate = (TextView) convertView.findViewById(R.id.date);
+        TextView tvFrom = (TextView) convertView.findViewById(R.id.from);
+        TextView tvTo = (TextView) convertView.findViewById(R.id.to);
 
-        date= view.findViewById(R.id.date);
-        from=view.findViewById(R.id.from);
-        to=view.findViewById(R.id.to);
+        tvDate.setText(busPOJO.getBusDate());
+        tvFrom.setText(busPOJO.getBusFrom());
+        tvTo.setText(busPOJO.getBusTo());
 
-
-        date.setText(Buslist.get(i).getBusDate());
-      //  Log.d("TEST32423423", Buslist.get(1).getBusDate());
-        from.setText(Buslist.get(i).getBusTo());
-        to.setText(Buslist.get(i).getBusFrom());
-
-        return view;
+        return convertView;
     }
+
+
 
 
 
 
 
 }
+
+class ViewHolder extends RecyclerView.ViewHolder {
+    public ViewHolder(View v) {
+        super(v);
+    }
+
+
+}
+
