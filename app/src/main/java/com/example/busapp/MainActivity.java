@@ -48,92 +48,25 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity{
 
-
-   // ArrayList<String> Buslist22;
-
     private ListView listView;
-    private BusAdapter mAdapter;
-
-    private String username1;
-    private String password1;
-    private Button login;
-
     int swaper = 0;
-
-
     public static String busIDfromClick = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        initItemClick();
        listView = (ListView) findViewById(R.id.buslistView);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
 
-
-//       username1 = usernameEditText.getText().toString();
-//       password1 = passwordEditText.getText().toString();
-//
+        final String user = LoginActivity.user;
+        final String pass = LoginActivity.pass;
 
 
-        //getBuses();
-        //adapter = new BusAdapter(this, R.layout.adapter, Buslist);
-        //int listSize = Buslist.size();
-
-
-//        username =findViewById(R.id.username);
-//        password =findViewById(R.id.password);
-//        login = findViewById(R.id.login);
-//
-//
-
-//        login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//        listView.setClickable(true);
-//
-//        initItemClick();
-//        //getBuses();
-//        getBuses();
-//        //addBus(7);
-//
-//        //deleteBus(10);
-//
-//        BusPOJO b1 = new BusPOJO("1","1","1","1","1","1");
-//        BusPOJO b2 = new BusPOJO("2","2","2","2","2","2");
-//        BusPOJO b3 = new BusPOJO("2","2","5","2","2","2");
-//        BusPOJO b4 = new BusPOJO("2","2","3","2","2","2");
-
-//        ArrayList<BusPOJO> buslist = new ArrayList<>();
-//
-//        buslist.add(b1);
-//        buslist.add(b2);
-//        buslist.add(b3);
-//        buslist.add(b4);
-//
-//        getBuses();
-//
-//
-//       BusAdapter busAdapter = new BusAdapter(this,buslist);
-
-      // listView.setAdapter(busAdapter);
-
-
-
-        initItemClick();
-        // getBuses();
-
-
-
-
-         getAvaliableBuses();
+         getAvaliableBuses(user,pass);
 
 
         Button deleteBus = findViewById(R.id.busDelete);
@@ -141,9 +74,9 @@ public class MainActivity extends AppCompatActivity{
         deleteBus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteBus(busIDfromClick);
+                deleteBus(busIDfromClick,user,pass);
 
-                getBuses();
+                getBuses(user,pass);
 
 
 
@@ -157,8 +90,8 @@ public class MainActivity extends AppCompatActivity{
         addBus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addBus(busIDfromClick);
-                getAvaliableBuses();
+                addBus(busIDfromClick,user,pass);
+                getAvaliableBuses(user,pass);
             }
         });
 
@@ -171,11 +104,11 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) {
 
                 if (swaper % 2 ==1){
-                    getAvaliableBuses();
+                    getAvaliableBuses(user,pass);
                     swaper++;
                 }
                 else {
-                    getBuses();
+                    getBuses(user,pass);
                     swaper++;
                 }
 
@@ -212,14 +145,8 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-    public void getBuses(){
+    public void getBuses(final String user, final String pass){
 
-
-
-        String email;
-        String password;
-        //Your Ip Address here
-        //mac ipconfig getifaddr en0
         String url = "http://10.0.0.237:5000/busreservationJ/";
 
         RequestQueue requestQueue;
@@ -264,17 +191,12 @@ public class MainActivity extends AppCompatActivity{
                                 BusPOJO busPOJO = new BusPOJO();
 
 
-
                                 busPOJO.setBusID(obj.getString("busID"));
                                 busPOJO.setBusNumber(obj.getString("busNumber"));
                                 busPOJO.setBusDate(obj.getString("busDate"));
                                 busPOJO.setBusFrom(obj.getString("busFrom"));
                                 busPOJO.setBusTo(obj.getString("busTo"));
                                 busPOJO.setPrice(obj.getString("price"));
-
-
-                                //Buslist.clear();
-
 
 
                                 buslist.add(busPOJO);
@@ -291,37 +213,15 @@ public class MainActivity extends AppCompatActivity{
                             busAdapter.notifyDataSetChanged();
                             listView.setAdapter(busAdapter);
 
-
-
-//                            BusAdapter adapter = new BusAdapter(getApplicationContext(), R.layout.adapter, Buslist);
-//                            listView.setAdapter(adapter);
-                           // Log.d("TEST32423423", Buslist.get().getBusDate());
-
-                           // adapter.notifyDataSetChanged();
-
-
-
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
-
-
-
-
                     }
                 },
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error){
 
-
-                       // Log.e("ErrorResponse:", error.getLocalizedMessage());
-                        // Do something when error occurred
-//                        Snackbar.make(
-//                                mCLayout,
-//                                "Error...",
-//                                Snackbar.LENGTH_LONG
-//                        ).show();
                     }
                 }
         )
@@ -329,7 +229,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s","zz","zz");
+                String creds = String.format("%s:%s",user,pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
@@ -340,30 +240,19 @@ public class MainActivity extends AppCompatActivity{
         requestQueue.add(jsonArrayRequest);
     }
 
-    public void getAvaliableBuses(){
+    public void getAvaliableBuses(final String user, final String pass){
 
-
-
-        String email;
-        final String password;
-        //Your Ip Address here
-        //mac ipconfig getifaddr en0
         String url = "http://10.0.0.237:5000/availablebusscheduleJ/";
 
         RequestQueue requestQueue;
 
-// Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
-// Set up the network to use HttpURLConnection as the HTTP client.
         Network network = new BasicNetwork(new HurlStack());
 
-// Instantiate the RequestQueue with the cache and network.
         requestQueue = new RequestQueue(cache, network);
 
-// Start the queue
         requestQueue.start();
-        // Initialize a new JsonArrayRequest instance
 
 
 
@@ -374,20 +263,12 @@ public class MainActivity extends AppCompatActivity{
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        // Do something with response
-                        //mTextView.setText(response.toString());
-
-                        // Process the JSON
-
 
                         try{
-                            // Loop through the array elements
-
                             ArrayList<BusPOJO> buslist = new ArrayList<>();
 
                             buslist.clear();
                             for(int i=0;i<response.length();i++){
-                                // Get current json object
                                 JSONObject obj = response.getJSONObject(i);
                                 BusPOJO busPOJO = new BusPOJO();
 
@@ -400,17 +281,9 @@ public class MainActivity extends AppCompatActivity{
                                 busPOJO.setBusTo(obj.getString("busTo"));
                                 busPOJO.setPrice(obj.getString("price"));
 
-
-                                //Buslist.clear();
-
-
-
                                 buslist.add(busPOJO);
 
                                 Log.d("BusList   ",buslist.get(i).toString());
-
-
-
 
 
                             }
@@ -418,16 +291,6 @@ public class MainActivity extends AppCompatActivity{
                             BusAdapter busAdapter = new BusAdapter(getApplicationContext(),buslist);
                             busAdapter.notifyDataSetChanged();
                             listView.setAdapter(busAdapter);
-
-
-
-//                            BusAdapter adapter = new BusAdapter(getApplicationContext(), R.layout.adapter, Buslist);
-//                            listView.setAdapter(adapter);
-                            // Log.d("TEST32423423", Buslist.get().getBusDate());
-
-                            // adapter.notifyDataSetChanged();
-
-
 
                         }catch (JSONException e){
                             e.printStackTrace();
@@ -441,19 +304,6 @@ public class MainActivity extends AppCompatActivity{
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error){
-
-//
-//                        Intent intentMain = new Intent(MainActivity.this ,
-//                                LoginActivity.class);
-//                        MainActivity.this.startActivity(intentMain);
-
-                        // Log.e("ErrorResponse:", error.getLocalizedMessage());
-                        // Do something when error occurred
-//                        Snackbar.make(
-//                                mCLayout,
-//                                "Error...",
-//                                Snackbar.LENGTH_LONG
-//                        ).show();
                     }
                 }
         )
@@ -462,43 +312,30 @@ public class MainActivity extends AppCompatActivity{
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
                 String u = "zz";
-                String creds = String.format("%s:%s",u,u);
+                String creds = String.format("%s:%s",user,pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
             }
         };
 
-        // Add JsonArrayRequest to the RequestQueue
         requestQueue.add(jsonArrayRequest);
     }
 
 
 
-    public void addBus(String busID){
-
-
-
-        String email;
-        String password;
-        //Your Ip Address here
-        //mac ipconfig getifaddr en0
+    public void addBus(String busID,final String user, final String pass){
         String url = "http://10.0.0.237:5000/availablebusscheduleJ/addto/" + busID;
 
         RequestQueue requestQueue;
 
-// Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
-// Set up the network to use HttpURLConnection as the HTTP client.
         Network network = new BasicNetwork(new HurlStack());
 
-// Instantiate the RequestQueue with the cache and network.
         requestQueue = new RequestQueue(cache, network);
 
-// Start the queue
         requestQueue.start();
-        // Initialize a new JsonArrayRequest instance
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.POST,
                 url,
@@ -513,14 +350,6 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void onErrorResponse(VolleyError error){
 
-
-                        // Log.e("ErrorResponse:", error.getLocalizedMessage());
-                        // Do something when error occurred
-//                        Snackbar.make(
-//                                mCLayout,
-//                                "Error...",
-//                                Snackbar.LENGTH_LONG
-//                        ).show();
                     }
                 }
         )
@@ -528,14 +357,13 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s","zz","zz");
+                String creds = String.format("%s:%s",user,pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
             }
         };
 
-        // Add JsonArrayRequest to the RequestQueue
         requestQueue.add(jsonArrayRequest);
         try
         {
@@ -548,30 +376,18 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    public void deleteBus(String busID){
-
-
-
-        String email;
-        String password;
-        //Your Ip Address here
-        //mac ipconfig getifaddr en0
+    public void deleteBus(String busID,final String user, final String pass){
         String url = "http://10.0.0.237:5000/busreservationJ/delete/" + busID;
 
         RequestQueue requestQueue;
 
-// Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
-// Set up the network to use HttpURLConnection as the HTTP client.
         Network network = new BasicNetwork(new HurlStack());
 
-// Instantiate the RequestQueue with the cache and network.
         requestQueue = new RequestQueue(cache, network);
 
-// Start the queue
         requestQueue.start();
-        // Initialize a new JsonArrayRequest instance
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.DELETE,
                 url,
@@ -586,14 +402,6 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void onErrorResponse(VolleyError error){
 
-
-                        // Log.e("ErrorResponse:", error.getLocalizedMessage());
-                        // Do something when error occurred
-//                        Snackbar.make(
-//                                mCLayout,
-//                                "Error...",
-//                                Snackbar.LENGTH_LONG
-//                        ).show();
                     }
                 }
         )
@@ -601,16 +409,13 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s","zz","zz");
+                String creds = String.format("%s:%s",user,pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
             }
         };
-
-        // Add JsonArrayRequest to the RequestQueue
         requestQueue.add(jsonArrayRequest);
-
 
         try
         {
@@ -618,15 +423,7 @@ public class MainActivity extends AppCompatActivity{
         }
         catch(InterruptedException e)
         {
-            // this part is executed when an exception (in this example InterruptedException) occurs
         }
     }
-
-
-
-
-
-
-
 
 }
