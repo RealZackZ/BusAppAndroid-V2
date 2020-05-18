@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     int swaper = 0;
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initItemClick();
-       listView = (ListView) findViewById(R.id.buslistView);
+        listView = (ListView) findViewById(R.id.buslistView);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
         final String pass = LoginActivity.pass;
 
 
-         getAvaliableBuses(user,pass);
+        getAvaliableBuses(user, pass);
 
 
         Button deleteBus = findViewById(R.id.busDelete);
@@ -74,10 +74,9 @@ public class MainActivity extends AppCompatActivity{
         deleteBus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteBus(busIDfromClick,user,pass);
+                deleteBus(busIDfromClick, user, pass);
 
-                getBuses(user,pass);
-
+                getBuses(user, pass);
 
 
             }
@@ -90,11 +89,10 @@ public class MainActivity extends AppCompatActivity{
         addBus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addBus(busIDfromClick,user,pass);
-                getAvaliableBuses(user,pass);
+                addBus(busIDfromClick, user, pass);
+                getAvaliableBuses(user, pass);
             }
         });
-
 
 
         Button settings = findViewById(R.id.settings);
@@ -103,23 +101,17 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
 
-                if (swaper % 2 ==1){
-                    getAvaliableBuses(user,pass);
+                if (swaper % 2 == 1) {
+                    getAvaliableBuses(user, pass);
+                    swaper++;
+                } else {
+                    getBuses(user, pass);
                     swaper++;
                 }
-                else {
-                    getBuses(user,pass);
-                    swaper++;
-                }
-
-
-
 
 
             }
         });
-
-
 
 
     }
@@ -130,10 +122,9 @@ public class MainActivity extends AppCompatActivity{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 
-
             @Override
             public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
-                BusPOJO bus =(BusPOJO) listView.getItemAtPosition(position);
+                BusPOJO bus = (BusPOJO) listView.getItemAtPosition(position);
                 busIDfromClick = "";
                 busIDfromClick = bus.getBusID();
                 Log.d("BusID Clicked", busIDfromClick);
@@ -142,10 +133,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-
-
-
-    public void getBuses(final String user, final String pass){
+    public void getBuses(final String user, final String pass) {
 
         String url = "http://10.0.0.237:5000/busreservationJ/";
 
@@ -165,7 +153,6 @@ public class MainActivity extends AppCompatActivity{
         // Initialize a new JsonArrayRequest instance
 
 
-
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
@@ -179,13 +166,13 @@ public class MainActivity extends AppCompatActivity{
                         // Process the JSON
 
 
-                        try{
+                        try {
                             // Loop through the array elements
 
                             ArrayList<BusPOJO> buslist = new ArrayList<>();
 
                             buslist.clear();
-                            for(int i=0;i<response.length();i++){
+                            for (int i = 0; i < response.length(); i++) {
                                 // Get current json object
                                 JSONObject obj = response.getJSONObject(i);
                                 BusPOJO busPOJO = new BusPOJO();
@@ -201,35 +188,31 @@ public class MainActivity extends AppCompatActivity{
 
                                 buslist.add(busPOJO);
 
-                                Log.d("BusList   ",buslist.get(i).toString());
-
-
-
+                                Log.d("BusList   ", buslist.get(i).toString());
 
 
                             }
 
-                            BusAdapter busAdapter = new BusAdapter(getApplicationContext(),buslist);
+                            BusAdapter busAdapter = new BusAdapter(getApplicationContext(), buslist);
                             busAdapter.notifyDataSetChanged();
                             listView.setAdapter(busAdapter);
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 },
-                new Response.ErrorListener(){
+                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error){
+                    public void onErrorResponse(VolleyError error) {
 
                     }
                 }
-        )
-        {
+        ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s",user,pass);
+                String creds = String.format("%s:%s", user, pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
@@ -240,7 +223,7 @@ public class MainActivity extends AppCompatActivity{
         requestQueue.add(jsonArrayRequest);
     }
 
-    public void getAvaliableBuses(final String user, final String pass){
+    public void getAvaliableBuses(final String user, final String pass) {
 
         String url = "http://10.0.0.237:5000/availablebusscheduleJ/";
 
@@ -255,7 +238,6 @@ public class MainActivity extends AppCompatActivity{
         requestQueue.start();
 
 
-
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
@@ -264,14 +246,13 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void onResponse(JSONArray response) {
 
-                        try{
+                        try {
                             ArrayList<BusPOJO> buslist = new ArrayList<>();
 
                             buslist.clear();
-                            for(int i=0;i<response.length();i++){
+                            for (int i = 0; i < response.length(); i++) {
                                 JSONObject obj = response.getJSONObject(i);
                                 BusPOJO busPOJO = new BusPOJO();
-
 
 
                                 busPOJO.setBusID(obj.getString("busID"));
@@ -283,36 +264,32 @@ public class MainActivity extends AppCompatActivity{
 
                                 buslist.add(busPOJO);
 
-                                Log.d("BusList   ",buslist.get(i).toString());
+                                Log.d("BusList   ", buslist.get(i).toString());
 
 
                             }
 
-                            BusAdapter busAdapter = new BusAdapter(getApplicationContext(),buslist);
+                            BusAdapter busAdapter = new BusAdapter(getApplicationContext(), buslist);
                             busAdapter.notifyDataSetChanged();
                             listView.setAdapter(busAdapter);
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
 
-
-
                     }
                 },
-                new Response.ErrorListener(){
+                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error){
+                    public void onErrorResponse(VolleyError error) {
                     }
                 }
-        )
-        {
+        ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String u = "zz";
-                String creds = String.format("%s:%s",user,pass);
+                String creds = String.format("%s:%s", user, pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
@@ -323,8 +300,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-
-    public void addBus(String busID,final String user, final String pass){
+    public void addBus(String busID, final String user, final String pass) {
         String url = "http://10.0.0.237:5000/availablebusscheduleJ/addto/" + busID;
 
         RequestQueue requestQueue;
@@ -346,18 +322,17 @@ public class MainActivity extends AppCompatActivity{
 
                     }
                 },
-                new Response.ErrorListener(){
+                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error){
+                    public void onErrorResponse(VolleyError error) {
 
                     }
                 }
-        )
-        {
+        ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s",user,pass);
+                String creds = String.format("%s:%s", user, pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
@@ -365,18 +340,15 @@ public class MainActivity extends AppCompatActivity{
         };
 
         requestQueue.add(jsonArrayRequest);
-        try
-        {
+        try {
             Thread.sleep(1000);
-        }
-        catch(InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             // this part is executed when an exception (in this example InterruptedException) occurs
         }
     }
 
 
-    public void deleteBus(String busID,final String user, final String pass){
+    public void deleteBus(String busID, final String user, final String pass) {
         String url = "http://10.0.0.237:5000/busreservationJ/delete/" + busID;
 
         RequestQueue requestQueue;
@@ -398,18 +370,17 @@ public class MainActivity extends AppCompatActivity{
 
                     }
                 },
-                new Response.ErrorListener(){
+                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error){
+                    public void onErrorResponse(VolleyError error) {
 
                     }
                 }
-        )
-        {
+        ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s",user,pass);
+                String creds = String.format("%s:%s", user, pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
                 return params;
@@ -417,12 +388,9 @@ public class MainActivity extends AppCompatActivity{
         };
         requestQueue.add(jsonArrayRequest);
 
-        try
-        {
+        try {
             Thread.sleep(1000);
-        }
-        catch(InterruptedException e)
-        {
+        } catch (InterruptedException e) {
         }
     }
 

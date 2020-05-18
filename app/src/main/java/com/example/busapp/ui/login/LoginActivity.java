@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -105,9 +107,15 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
 
+
+                        Toast.makeText(LoginActivity.this, "Success \n Welcome " + user,
+                                Toast.LENGTH_LONG).show();
+
+
                         Intent intentMain = new Intent(LoginActivity.this ,
                                 MainActivity.class);
                         LoginActivity.this.startActivity(intentMain);
+
 
 
                     }
@@ -116,6 +124,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error){
 
+                        Toast.makeText(LoginActivity.this, "Wrong email or password",
+                                Toast.LENGTH_LONG).show();
                     }
                 }
         )
@@ -123,7 +133,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
-                String u = "zzz";
                 String creds = String.format("%s:%s",user,pass);
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
                 params.put("Authorization", auth);
