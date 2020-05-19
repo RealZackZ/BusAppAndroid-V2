@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     int swaper = 0;
     public static String busIDfromClick = "";
 
+    String ipAddress = "";
+    String port = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getBuses(final String user, final String pass) {
 
-        String url = "http://10.0.0.237:5000/busreservationJ/";
+        String url = "http://"+ipAddress+":"+port+"/busreservationJ/";
 
         RequestQueue requestQueue;
 
@@ -225,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getAvaliableBuses(final String user, final String pass) {
 
-        String url = "http://10.0.0.237:5000/availablebusscheduleJ/";
+        String url = "http://"+ipAddress+":"+port+"/availablebusscheduleJ/";
 
         RequestQueue requestQueue;
 
@@ -301,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void addBus(String busID, final String user, final String pass) {
-        String url = "http://10.0.0.237:5000/availablebusscheduleJ/addto/" + busID;
+        String url = "http://"+ipAddress+":"+port+"/availablebusscheduleJ/addto/" + busID;
 
         RequestQueue requestQueue;
 
@@ -349,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void deleteBus(String busID, final String user, final String pass) {
-        String url = "http://10.0.0.237:5000/busreservationJ/delete/" + busID;
+        String url = "http://"+ipAddress+":"+port+"/busreservationJ/delete/" + busID;
 
         RequestQueue requestQueue;
 
